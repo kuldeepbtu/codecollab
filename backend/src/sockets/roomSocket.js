@@ -75,9 +75,34 @@ const registerRoomSocket = (io, socket) => {
         }
       );
 
+      // Send initial room code and language to joining client
+      socket.emit(SOCKET_EVENTS.SYNC_ROOM_STATE, {
+        code: room.code || "",
+        language: room.language || "javascript",
+      });
+
       console.log(`${username} joined room ${roomId}`);
     }
   );
+
+  socket.on(SOCKET_EVENTS.CODE_CHANGE, async ({ roomId, code }) => {
+    socket.to(roomId).emit(SOCKET_EVENTS.CODE_CHANGE, code);
+    // Debounce save or update room document
+    try {
+      await Room.updateOne({ roomId }, { code });
+    } catch (e) {
+      console.error("Error saving code change:", e);
+    }
+  });
+
+  socket.on(SOCKET_EVENTS.LANGUAGE_CHANGE, async ({ roomId, language }) => {
+    io.to(roomId).emit(SOCKET_EVENTS.LANGUAGE_CHANGE, language);
+    try {
+      await Room.updateOne({ roomId }, { language });
+    } catch (e) {
+      console.error("Error saving language change:", e);
+    }
+  });
 
   socket.on(
     SOCKET_EVENTS.LEAVE_ROOM,

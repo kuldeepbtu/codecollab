@@ -9,8 +9,13 @@ function JoinRoomCard() {
   const navigate = useNavigate();
 
   const join = async () => {
+    if (!roomId.trim()) {
+      toast.error("Please enter a Room ID");
+      return;
+    }
+
     try {
-      const res = await joinRoom(roomId);
+      const res = await joinRoom(roomId.trim());
 
       toast.success(res.message);
 

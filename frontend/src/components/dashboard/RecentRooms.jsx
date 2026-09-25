@@ -14,9 +14,10 @@ function RecentRooms() {
   const loadRooms = async () => {
     try {
       const data = await getMyRooms();
-      setRooms(data);
+      setRooms(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error(err);
+      setRooms([]);
     }
   };
 

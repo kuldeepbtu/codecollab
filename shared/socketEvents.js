@@ -8,4 +8,11 @@ export const SOCKET_EVENTS = {
   USER_JOINED: "user-joined",
   USER_LEFT: "user-left",
   PARTICIPANTS_UPDATED: "participants-updated",
+
+  CODE_CHANGE: "code-change",
+  LANGUAGE_CHANGE: "language-change",
+  SYNC_ROOM_STATE: "sync-room-state",
+  CURSOR_CHANGE: "cursor-change",
+  CODE_RUN: "code-run",
+  CODE_OUTPUT: "code-output",
 };

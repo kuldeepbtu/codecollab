@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { createRoom } from "../../services/roomService";
 
 function CreateRoomCard() {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
   const [accessMode, setAccessMode] = useState("open");
@@ -18,8 +20,8 @@ function CreateRoomCard() {
       });
 
       await navigator.clipboard.writeText(res.room.roomId);
-
-      toast.success(`Room Created (${res.room.roomId})`);
+      toast.success(`Room Created (${res.room.roomId}) - Joining...`);
+      navigate(`/room/${res.room.roomId}`);
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed");
     }
