@@ -1,5 +1,4 @@
 import { Link, Navigate, useNavigate } from "react-router-dom";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,12 +18,13 @@ const loginSchema = z.object({
 function LoginPage() {
   const navigate = useNavigate();
 
-  const { login, signup, user } = useAuth();
-  const [demoCredentials, setDemoCredentials] = useState(null);
-  const [demoLoading, setDemoLoading] = useState(false);
+  const { login, user } = useAuth();
+  const demoEmail = "demo@codecollab.app";
+  const demoPassword = "Demo@123456";
 
   const {
     register,
+    setValue,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm({
@@ -35,35 +35,9 @@ function LoginPage() {
     return <Navigate to="/dashboard" replace />;
   }
 
-  const handleDemoLogin = async () => {
-    if (demoLoading) return;
-
-    setDemoLoading(true);
-    const suffix = `${Date.now().toString(36)}${crypto.randomUUID().slice(0, 8)}`;
-    const credentials = {
-      name: "CodeCollab Demo Guest",
-      email: `guest-${suffix}@codecollab-demo.com`,
-      password: `Guest@${crypto.randomUUID().slice(0, 12)}`,
-    };
-
-    try {
-      await signup(credentials.name, credentials.email, credentials.password);
-      setDemoCredentials({
-        email: credentials.email,
-        password: credentials.password,
-      });
-      toast.success("Demo account created. You are now logged in!");
-      navigate("/dashboard");
-    } catch (err) {
-      toast.error(
-        err?.response?.data?.message ||
-          (err?.code === "ERR_NETWORK"
-            ? "Cannot connect to the CodeCollab backend."
-            : "Could not create a demo account. Please try again.")
-      );
-    } finally {
-      setDemoLoading(false);
-    }
+  const fillDemoCredentials = () => {
+    setValue("email", demoEmail, { shouldValidate: true });
+    setValue("password", demoPassword, { shouldValidate: true });
   };
 
   const onSubmit = async (data) => {
@@ -92,6 +66,20 @@ function LoginPage() {
         <p className="mb-8 text-center text-slate-400">
           Welcome Back 👋
         </p>
+
+        <div className="mb-6 rounded-xl border border-blue-500/30 bg-blue-500/10 p-4">
+          <p className="mb-2 text-sm font-semibold text-blue-300">Example demo login</p>
+          <div className="space-y-1 rounded-lg bg-slate-900 p-3 text-xs text-slate-300">
+            <p><span className="text-slate-500">Email:</span> {demoEmail}</p>
+            <p><span className="text-slate-500">Password:</span> {demoPassword}</p>
+          </div>
+          <p className="mt-2 text-xs leading-relaxed text-amber-300">
+            Sample credentials only. The demo user must be created in the backend database before these details can authenticate.
+          </p>
+          <Button type="button" onClick={fillDemoCredentials} className="mt-3">
+            Fill Demo Credentials
+          </Button>
+        </div>
 
         <form
           onSubmit={handleSubmit(onSubmit)}
