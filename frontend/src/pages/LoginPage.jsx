@@ -1,4 +1,5 @@
 import { Link, Navigate, useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,7 +19,9 @@ const loginSchema = z.object({
 function LoginPage() {
   const navigate = useNavigate();
 
-  const { login, user } = useAuth();
+  const { login, signup, user } = useAuth();
+  const [demoCredentials, setDemoCredentials] = useState(null);
+  const [demoLoading, setDemoLoading] = useState(false);
 
   const {
     register,
@@ -31,6 +34,37 @@ function LoginPage() {
   if (user) {
     return <Navigate to="/dashboard" replace />;
   }
+
+  const handleDemoLogin = async () => {
+    if (demoLoading) return;
+
+    setDemoLoading(true);
+    const suffix = `${Date.now().toString(36)}${crypto.randomUUID().slice(0, 8)}`;
+    const credentials = {
+      name: "CodeCollab Demo Guest",
+      email: `guest-${suffix}@codecollab-demo.com`,
+      password: `Guest@${crypto.randomUUID().slice(0, 12)}`,
+    };
+
+    try {
+      await signup(credentials.name, credentials.email, credentials.password);
+      setDemoCredentials({
+        email: credentials.email,
+        password: credentials.password,
+      });
+      toast.success("Demo account created. You are now logged in!");
+      navigate("/dashboard");
+    } catch (err) {
+      toast.error(
+        err?.response?.data?.message ||
+          (err?.code === "ERR_NETWORK"
+            ? "Cannot connect to the CodeCollab backend."
+            : "Could not create a demo account. Please try again.")
+      );
+    } finally {
+      setDemoLoading(false);
+    }
+  };
 
   const onSubmit = async (data) => {
     try {
