@@ -1,5 +1,5 @@
 import Room from "../models/Room.js";
-import User from "../models/User.js";
+import User from "../models/user.js";
 import JoinRequest from "../models/JoinRequest.js";
 import generateRoomId from "../utils/generateRoomId.js";
 
