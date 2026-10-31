@@ -10,7 +10,7 @@ import {
   Sparkles,
   BookOpen,
   Code2,
-  Github,
+  GitBranch,
   Send,
   X,
   Loader2,
@@ -401,7 +401,7 @@ export default function Room() {
                 : "border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700"
             }`}
           >
-            <Github className="h-3.5 w-3.5" />
+            <GitBranch className="h-3.5 w-3.5" />
             GitHub
           </button>
         </div>
@@ -556,7 +556,7 @@ export default function Room() {
             {/* Panel Header */}
             <div className="flex items-center justify-between border-b border-slate-800 px-4 py-3">
               <div className="flex items-center gap-2">
-                <Github className="h-4 w-4 text-emerald-400" />
+                <GitBranch className="h-4 w-4 text-emerald-400" />
                 <h3 className="text-sm font-semibold text-white">
                   GitHub Integration
                 </h3>
