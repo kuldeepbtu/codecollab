@@ -10,7 +10,6 @@ import Button from "../components/ui/Button";
 
 import { useAuth } from "../contexts/AuthContext";
 import { useEffect, useRef } from "react";
-import { Chrome } from "lucide-react";
 
 const loginSchema = z.object({
   email: z.string().email("Enter a valid email"),
