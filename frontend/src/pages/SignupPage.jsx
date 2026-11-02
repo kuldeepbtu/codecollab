@@ -24,7 +24,6 @@ const signupSchema = z
 
 function SignupPage() {
   const navigate = useNavigate();
-
   const { signup, user } = useAuth();
 
   const {
@@ -42,41 +41,31 @@ function SignupPage() {
   const onSubmit = async (data) => {
     try {
       await signup(data.name, data.email, data.password);
-
       toast.success("Account Created!");
-
       navigate("/dashboard");
     } catch (err) {
       toast.error(
-        err?.response?.data?.message || (err?.code === "ERR_NETWORK" ? "Cannot connect to backend server (http://localhost:5000)" : "Signup Failed")
+        err?.response?.data?.message ||
+          (err?.code === "ERR_NETWORK"
+            ? "Cannot reach the CodeCollab backend. Please try again shortly."
+            : "Signup Failed")
       );
     }
   };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-950 p-6">
-
       <Card>
+        <h1 className="mb-2 text-center text-4xl font-bold">CodeCollab</h1>
+        <p className="mb-8 text-center text-slate-400">Create Your Account</p>
 
-        <h1 className="mb-2 text-center text-4xl font-bold">
-          CodeCollab
-        </h1>
-
-        <p className="mb-8 text-center text-slate-400">
-          Create Your Account
-        </p>
-
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="space-y-5 w-[380px]"
-        >
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 w-[380px]">
           <Input
             label="Name"
             placeholder="Enter Name"
             error={errors.name?.message}
             {...register("name")}
           />
-
           <Input
             label="Email"
             type="email"
@@ -84,7 +73,6 @@ function SignupPage() {
             error={errors.email?.message}
             {...register("email")}
           />
-
           <Input
             label="Password"
             type="password"
@@ -92,7 +80,6 @@ function SignupPage() {
             error={errors.password?.message}
             {...register("password")}
           />
-
           <Input
             label="Confirm Password"
             type="password"
@@ -100,7 +87,6 @@ function SignupPage() {
             error={errors.confirmPassword?.message}
             {...register("confirmPassword")}
           />
-
           <Button type="submit">
             {isSubmitting ? "Creating..." : "Create Account"}
           </Button>
@@ -108,14 +94,10 @@ function SignupPage() {
 
         <p className="mt-6 text-center text-sm text-slate-400">
           Already have an account?{" "}
-          <Link
-            to="/login"
-            className="text-blue-500 hover:underline"
-          >
+          <Link to="/login" className="text-blue-500 hover:underline">
             Login
           </Link>
         </p>
-
       </Card>
     </div>
   );
