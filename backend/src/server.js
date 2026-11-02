@@ -5,8 +5,10 @@ import connectDB from "./config/db.js";
 import { PORT, CLIENT_URL } from "./config/env.js";
 import initializeSocket from "./sockets/index.js";
 import socketAuth from "./middleware/socketAuth.js";
+import { seedDemoUserService } from "./services/authService.js";
 const startServer = async () => {
   await connectDB();
+  await seedDemoUserService();
 
   const server = http.createServer(app);
 
