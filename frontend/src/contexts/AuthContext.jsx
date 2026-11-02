@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import * as authService from "../services/authService";
 
 const AuthContext = createContext();
@@ -31,12 +31,12 @@ export function AuthProvider({ children }) {
     return data;
   };
 
-  const googleLogin = async (credential) => {
+  const googleLogin = useCallback(async (credential) => {
     const data = await authService.googleLogin(credential);
     localStorage.setItem("token", data.token);
     setUser(data.user);
     return data;
-  };
+  }, []);
 
   const logout = () => {
     localStorage.removeItem("token");
