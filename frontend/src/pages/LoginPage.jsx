@@ -43,29 +43,23 @@ function LoginPage() {
   const onSubmit = async (data) => {
     try {
       await login(data.email, data.password);
-
       toast.success("Login Successful!");
-
       navigate("/dashboard");
     } catch (err) {
       toast.error(
-        err?.response?.data?.message || (err?.code === "ERR_NETWORK" ? "Cannot connect to backend server (http://localhost:5000)" : "Login Failed")
+        err?.response?.data?.message ||
+          (err?.code === "ERR_NETWORK"
+            ? "Cannot reach the CodeCollab backend. Please try again shortly."
+            : "Login Failed")
       );
     }
   };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-950 p-6">
-
       <Card>
-
-        <h1 className="mb-2 text-center text-4xl font-bold">
-          CodeCollab
-        </h1>
-
-        <p className="mb-8 text-center text-slate-400">
-          Welcome Back 👋
-        </p>
+        <h1 className="mb-2 text-center text-4xl font-bold">CodeCollab</h1>
+        <p className="mb-8 text-center text-slate-400">Welcome Back 👋</p>
 
         <div className="mb-6 rounded-xl border border-blue-500/30 bg-blue-500/10 p-4">
           <p className="mb-2 text-sm font-semibold text-blue-300">Example demo login</p>
@@ -81,10 +75,7 @@ function LoginPage() {
           </Button>
         </div>
 
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="space-y-5 w-[380px]"
-        >
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 w-[380px]">
           <Input
             label="Email"
             type="email"
@@ -92,7 +83,6 @@ function LoginPage() {
             error={errors.email?.message}
             {...register("email")}
           />
-
           <Input
             label="Password"
             type="password"
@@ -100,7 +90,6 @@ function LoginPage() {
             error={errors.password?.message}
             {...register("password")}
           />
-
           <Button type="submit">
             {isSubmitting ? "Logging In..." : "Login"}
           </Button>
@@ -108,14 +97,10 @@ function LoginPage() {
 
         <p className="mt-6 text-center text-sm text-slate-400">
           Don't have an account?{" "}
-          <Link
-            to="/signup"
-            className="text-blue-500 hover:underline"
-          >
+          <Link to="/signup" className="text-blue-500 hover:underline">
             Signup
           </Link>
         </p>
-
       </Card>
     </div>
   );
