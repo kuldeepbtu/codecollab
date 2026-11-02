@@ -9,6 +9,8 @@ import Input from "../components/ui/Input";
 import Button from "../components/ui/Button";
 
 import { useAuth } from "../contexts/AuthContext";
+import { useEffect, useRef } from "react";
+import { Chrome } from "lucide-react";
 
 const loginSchema = z.object({
   email: z.string().email("Enter a valid email"),
@@ -18,7 +20,8 @@ const loginSchema = z.object({
 function LoginPage() {
   const navigate = useNavigate();
 
-  const { login, user } = useAuth();
+  const { login, googleLogin, user } = useAuth();
+  const googleButtonRef = useRef(null);
   const demoEmail = "demo@codecollab.app";
   const demoPassword = "123456";
 
@@ -30,6 +33,51 @@ function LoginPage() {
   } = useForm({
     resolver: zodResolver(loginSchema),
   });
+
+  useEffect(() => {
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+    if (!clientId || !googleButtonRef.current) return;
+
+    let cancelled = false;
+    const renderGoogleButton = () => {
+      if (cancelled || !window.google?.accounts?.id || !googleButtonRef.current) return;
+      window.google.accounts.id.initialize({
+        client_id: clientId,
+        callback: async ({ credential }) => {
+          try {
+            await googleLogin(credential);
+            toast.success("Signed in with Google!");
+            navigate("/dashboard");
+          } catch (err) {
+            toast.error(err?.response?.data?.message || "Google sign-in failed.");
+          }
+        },
+      });
+      window.google.accounts.id.renderButton(googleButtonRef.current, {
+        theme: "filled_black",
+        size: "large",
+        shape: "rectangular",
+        text: "continue_with",
+        width: 340,
+      });
+    };
+
+    if (window.google?.accounts?.id) {
+      renderGoogleButton();
+    } else {
+      let script = document.querySelector('script[src="https://accounts.google.com/gsi/client"]');
+      if (!script) {
+        script = document.createElement("script");
+        script.src = "https://accounts.google.com/gsi/client";
+        script.async = true;
+        script.defer = true;
+        document.head.appendChild(script);
+      }
+      script.addEventListener("load", renderGoogleButton);
+    }
+
+    return () => { cancelled = true; };
+  }, [googleLogin, navigate]);
 
   if (user) {
     return <Navigate to="/dashboard" replace />;
@@ -75,6 +123,20 @@ function LoginPage() {
           </Button>
         </div>
 
+        <div className="mb-5 flex flex-col items-center gap-2">
+          {import.meta.env.VITE_GOOGLE_CLIENT_ID ? (
+            <div ref={googleButtonRef} className="min-h-10" />
+          ) : (
+            <p className="text-center text-xs text-slate-500">
+              Google sign-in will be available after Google OAuth is configured.
+            </p>
+          )}
+        </div>
+        <div className="mb-5 flex items-center gap-3 text-xs text-slate-500">
+          <span className="h-px flex-1 bg-slate-700" />
+          OR CONTINUE WITH EMAIL
+          <span className="h-px flex-1 bg-slate-700" />
+        </div>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 w-[380px]">
           <Input
             label="Email"
