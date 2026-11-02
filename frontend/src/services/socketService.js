@@ -1,6 +1,7 @@
 import { io } from "socket.io-client";
+import { API_BASE_URL } from "../api/axios";
 
-const SERVER_URL = import.meta.env.VITE_API_URL;
+const SERVER_URL = API_BASE_URL;
 
 class SocketService {
   constructor() {
@@ -14,6 +15,10 @@ class SocketService {
       auth: {
         token,
       },
+      transports: ["websocket", "polling"],
+      reconnection: true,
+      reconnectionAttempts: 5,
+      timeout: 20000,
     });
 
     return this.socket;
