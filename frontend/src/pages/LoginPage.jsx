@@ -20,7 +20,7 @@ function LoginPage() {
 
   const { login, user } = useAuth();
   const demoEmail = "demo@codecollab.app";
-  const demoPassword = "Demo@123456";
+  const demoPassword = "123456";
 
   const {
     register,
@@ -62,13 +62,13 @@ function LoginPage() {
         <p className="mb-8 text-center text-slate-400">Welcome Back 👋</p>
 
         <div className="mb-6 rounded-xl border border-blue-500/30 bg-blue-500/10 p-4">
-          <p className="mb-2 text-sm font-semibold text-blue-300">Example demo login</p>
+          <p className="mb-2 text-sm font-semibold text-blue-300">Demo login</p>
           <div className="space-y-1 rounded-lg bg-slate-900 p-3 text-xs text-slate-300">
             <p><span className="text-slate-500">Email:</span> {demoEmail}</p>
             <p><span className="text-slate-500">Password:</span> {demoPassword}</p>
           </div>
           <p className="mt-2 text-xs leading-relaxed text-amber-300">
-            Sample credentials only. The demo user must be created in the backend database before these details can authenticate.
+            Demo account is provisioned automatically when the backend has DEMO_EMAIL and DEMO_PASSWORD configured.
           </p>
           <Button type="button" onClick={fillDemoCredentials} className="mt-3">
             Fill Demo Credentials
