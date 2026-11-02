@@ -2,6 +2,7 @@ import {
   signupUserService,
   loginUserService,
   getCurrentUserService,
+  googleLoginService,
 } from "../services/authService.js";
 
 export const signupController = async (req, res) => {
@@ -53,6 +54,19 @@ export const loginController = async (req, res) => {
       success: false,
       message: error.message,
     });
+  }
+};
+
+export const googleLoginController = async (req, res) => {
+  try {
+    const { credential } = req.body;
+    if (!credential) {
+      return res.status(400).json({ success: false, message: "Google credential is required" });
+    }
+    const data = await googleLoginService(credential);
+    return res.status(200).json({ success: true, message: "Google sign-in successful", ...data });
+  } catch (error) {
+    return res.status(401).json({ success: false, message: error.message || "Google sign-in failed" });
   }
 };
 
