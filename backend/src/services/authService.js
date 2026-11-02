@@ -78,6 +78,44 @@ export const loginUserService = async ({ email, password }) => {
   };
 };
 
+export const googleLoginService = async (credential) => {
+  const clientId = process.env.GOOGLE_CLIENT_ID;
+  if (!clientId) throw new Error("Google sign-in is not configured on the server.");
+
+  const response = await fetch(
+    `https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(credential)}`
+  );
+  if (!response.ok) throw new Error("Google sign-in token could not be verified.");
+
+  const profile = await response.json();
+  if (
+    profile.aud !== clientId ||
+    profile.email_verified !== "true" ||
+    !["accounts.google.com", "https://accounts.google.com"].includes(profile.iss)
+  ) {
+    throw new Error("Google account verification failed.");
+  }
+
+  const email = profile.email?.trim().toLowerCase();
+  const name = profile.name?.trim() || email?.split("@")[0] || "Google User";
+  if (!email) throw new Error("Google did not provide an email address.");
+
+  let user = await User.findOne({ email });
+  if (!user) {
+    const randomPassword = await bcrypt.hash(
+      (await import("crypto")).randomBytes(32).toString("hex"),
+      10
+    );
+    user = await User.create({ name, email, password: randomPassword });
+  }
+
+  const token = generateToken(user);
+  return {
+    user: { id: user._id, name: user.name, email: user.email },
+    token,
+  };
+};
+
 export const getCurrentUserService = async (userId) => {
   const user = await User.findById(userId).select("-password");
 
